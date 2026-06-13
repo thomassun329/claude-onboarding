@@ -196,24 +196,6 @@
   .note-blue   { background: #dbeafe; color: #1e3a8a; }
   .note-amber  { background: #fff8e1; color: #92400e; }
 
-  .legend {
-    margin-top: 28px;
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.78rem;
-    color: #555;
-  }
-  .legend-swatch {
-    width: 11px; height: 11px;
-    border-radius: 3px;
-    flex-shrink: 0;
-  }
 </style>
 </head>
 <body>
@@ -305,8 +287,8 @@
 
           <div class="folder f-pdir" style="margin-top:8px;">
             <span class="icon">📁</span>
-            <span class="name">memory-buckets/</span>
-            <span style="font-size:0.72rem;color:#999;">one per folder you open</span>
+            <span class="name">projects/</span>
+            <span style="font-size:0.72rem;color:#999;">one bucket per folder you open</span>
           </div>
 
           <div class="indent">
@@ -371,7 +353,7 @@
         <div class="row"><div class="dot dot-off"></div><div style="color:#aaa;">.claude/ global memory &nbsp;— not loaded</div></div>
         <div class="row"><div class="dot dot-on"></div><div>-code-work-recipe-app/ &nbsp;<strong>loaded</strong></div></div>
         <div class="row"><div class="dot dot-off"></div><div style="color:#aaa;">-code-work-recipe-app-backend/ &nbsp;— not loaded</div></div>
-        <div class="note note-green">✅ Claude writes memory automatically when it learns something from you.</div>
+        <div class="note note-green">📌 MEMORY.md index loads every session automatically. Individual topic files only load when you ask something related.</div>
         <div class="note note-yellow" style="margin-top:8px;">⚠️ Claude sometimes saves to the wrong place. Audit every few weeks — but don't let it drift into a second CLAUDE.md.</div>
       </div>
 
@@ -380,19 +362,11 @@
         <div style="font-size:0.82rem;line-height:1.6;color:#444;">
           Claude creates a memory bucket for <strong>wherever you open it</strong>. Open from <code style="background:#f3f4f6;padding:1px 5px;border-radius:4px;">personal/</code> for personal work, <code style="background:#f3f4f6;padding:1px 5px;border-radius:4px;">work/</code> for work. The context should match the folder.
         </div>
-        <div class="note note-green" style="margin-top:8px;">📌 MEMORY.md index loads every session automatically. Individual topic files only load when you ask something related.</div>
       </div>
+
 
     </div>
 
-  </div>
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-swatch" style="background:#2563eb;"></div> Where you opened Claude</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b;"></div> Active memory bucket</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#ede9fe;border:1px solid #c4b5fd;"></div> CLAUDE.md file</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#22c55e;"></div> Memory file (auto-loads)</div>
-    <div class="legend-item"><div class="legend-swatch" style="background:#f0fdf4;border:1px solid #bbf7d0;"></div> Memory file (on demand)</div>
   </div>
 
 </div>
