@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLAUDE.md vs Memory — What's the difference?</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f3;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+
+  .canvas {
+    width: 100%;
+    max-width: 700px;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 32px;
+  }
+
+  table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  /* header row */
+  thead th {
+    padding: 14px 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: left;
+    background: #1a1a1a;
+    color: #fff;
+  }
+  thead th:first-child { width: 140px; }
+  thead th:nth-child(2), thead th:nth-child(3) { width: calc((100% - 140px) / 2); }
+
+  /* row label column */
+  td.label {
+    padding: 16px 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #888;
+    background: #f9f9f7;
+    border-bottom: 1px solid #efefed;
+    vertical-align: top;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  /* content cells */
+  td.cell {
+    padding: 16px 20px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    vertical-align: top;
+    border-bottom: 1px solid #efefed;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  td.cell-purple { background: #faf8ff; }
+  td.cell-green  { background: #f7fdf9; }
+
+  .who-badge {
+    display: inline-block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+  }
+  .badge-purple { background: #ede9fe; color: #6d28d9; }
+  .badge-green  { background: #d1fae5; color: #065f46; }
+
+  .example {
+    margin-top: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    font-style: italic;
+    color: #555;
+  }
+  .ex-purple { background: #ede9fe; }
+  .ex-green  { background: #d1fae5; }
+
+  .warning {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: #fef9c3;
+    border-radius: 10px;
+    font-size: 0.84rem;
+    color: #713f12;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <h1>CLAUDE.md vs Memory — What's the difference?</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th></th>
+        <th>CLAUDE.md</th>
+        <th>Memory</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="label">Who writes it</td>
+        <td class="cell cell-purple"><span class="who-badge badge-purple">You</span></td>
+        <td class="cell cell-green"><span class="who-badge badge-green">Claude</span></td>
+      </tr>
+      <tr>
+        <td class="label">What it contains</td>
+        <td class="cell cell-purple">
+          <div style="font-size:0.88rem;color:#444;line-height:1.6;">
+            Coding standards · Project structure · Build &amp; run commands · Things Claude should always know or always do
+          </div>
+        </td>
+        <td class="cell cell-green">
+          <div style="font-size:0.88rem;color:#444;line-height:1.6;">
+            <strong>User</strong> — who you are, your role<br>
+            <strong>Feedback</strong> — corrections, preferences<br>
+            <strong>Project</strong> — active decisions, volatile state<br>
+            <strong>Reference</strong> — where to find things externally
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td class="label">Example</td>
+        <td class="cell cell-purple">
+          Sarah writes in CLAUDE.md on day 1:
+          <div class="example ex-purple">"This project uses React and Python. Always run npm test before committing."</div>
+          Claude reads this every session. Sarah wrote it once.
+        </td>
+        <td class="cell cell-green">
+          On day 3 Sarah corrects Claude:
+          <div class="example ex-green">"Stop using var — always use const."</div>
+          Claude saves this to memory automatically. Sarah never touched a file.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning">
+    ⚠️ <strong>Claude sometimes saves to the wrong place.</strong> Audit memory every few weeks — but don't over-manage it. If you start manually writing memory files yourself, you end up with two competing sets of instructions that drift apart. You own CLAUDE.md — let Claude own memory.
+  </div>
+
+</div>
+</body>
+</html>
