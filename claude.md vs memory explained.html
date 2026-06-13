@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLAUDE.md vs Memory Explained</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f3;
+    color: #1a1a1a;
+    padding: 48px 24px 64px;
+  }
+
+  .canvas {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .subtitle {
+    font-size: 0.95rem;
+    color: #777;
+    margin-bottom: 40px;
+  }
+
+  .main-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 780px) { .main-row { grid-template-columns: 1fr; } }
+
+  .col-header {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 12px;
+  }
+
+  /* ── Folder rows ── */
+  .folder {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    font-weight: 500;
+  }
+  .folder .icon { font-size: 0.95rem; flex-shrink: 0; }
+  .folder .name { flex: 1; min-width: 0; }
+
+  /* CLAUDE.md shown as its own child row */
+  .claudemd-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #ede9fe;
+    color: #6d28d9;
+    margin-top: 4px;
+  }
+  .claudemd-row .icon { font-size: 0.85rem; flex-shrink: 0; }
+  .claudemd-row .name { flex: 1; }
+  .claudemd-row .tag {
+    font-size: 0.68rem;
+    font-weight: 700;
+    background: #ddd6fe;
+    color: #5b21b6;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+
+  .indent {
+    margin-left: 22px;
+    border-left: 2px solid #ddd;
+    padding-left: 14px;
+  }
+
+  /* folder colors */
+  .f-root    { background: #1a1a1a; color: #fff; }
+  .f-mid     { background: #e8e8e4; color: #333; }
+  .f-open    { background: #2563eb; color: #fff; }
+  .f-sub     { background: #f0f0ee; color: #999; }
+  .f-claude  { background: #e8e8e4; color: #333; }
+  .f-pdir    { background: #e8e8e4; color: #333; }
+  .f-active  { background: #f59e0b; color: #1a1a1a; }
+  .f-inactive{ background: #f0f0ee; color: #aaa; }
+  .f-mfile   { background: #22c55e; color: #fff; border: 1px solid #16a34a; }
+  .f-mfile2  { background: #f0fdf4; color: #065f46; border: 1px solid #bbf7d0; }
+
+  .you-are-here {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: #fbbf24;
+    color: #1a1a1a;
+    padding: 2px 7px;
+    border-radius: 20px;
+  }
+
+  .section-divider {
+    margin: 14px 0 10px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #aaa;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+  }
+
+  /* ── Panels ── */
+  .panel {
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin-bottom: 12px;
+  }
+  .panel:last-child { margin-bottom: 0; }
+
+  .panel-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .pt-purple { color: #7c3aed; }
+  .pt-green  { color: #059669; }
+  .pt-black  { color: #1a1a1a; }
+
+  .row {
+    display: flex;
+    align-items: baseline;
+    gap: 7px;
+    font-size: 0.82rem;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .row:last-child { margin-bottom: 0; }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .dot-on  { background: #22c55e; }
+  .dot-off { background: #e5e7eb; border: 1.5px solid #d1d5db; }
+
+  .file-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: monospace;
+    padding: 1px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .ft-purple { background: #ede9fe; color: #6d28d9; }
+
+  .note {
+    margin-top: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+  .note-purple { background: #ede9fe; color: #5b21b6; }
+  .note-green  { background: #d1fae5; color: #064e3b; }
+  .note-yellow { background: #fef9c3; color: #713f12; }
+  .note-blue   { background: #dbeafe; color: #1e3a8a; }
+  .note-amber  { background: #fff8e1; color: #92400e; }
+
+  .legend {
+    margin-top: 28px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.78rem;
+    color: #555;
+  }
+  .legend-swatch {
+    width: 11px; height: 11px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="canvas">
+
+  <h1>How Claude loads context when you open a folder</h1>
+
+  <div class="main-row">
+
+    <!-- ── COL 1: Unified tree ── -->
+    <div>
+      <div class="col-header">Your home folder — /Users/thomassun/</div>
+
+      <div class="folder f-root">
+        <span class="icon">🏠</span>
+        <span class="name">/Users/thomassun/</span>
+      </div>
+
+      <div class="indent">
+
+        <!-- YOUR WORK -->
+        <div class="section-divider">your work</div>
+
+        <div class="folder f-mid">
+          <span class="icon">📁</span>
+          <span class="name">code/</span>
+        </div>
+        <div class="indent">
+          <div class="claudemd-row">
+            <span class="icon">📄</span>
+            <span class="name">CLAUDE.md</span>
+            <span class="tag">rules for all projects</span>
+          </div>
+
+          <div class="folder f-sub" style="margin-top:6px;">
+            <span class="icon">📁</span>
+            <span class="name">personal/</span>
+          </div>
+
+          <div class="folder f-mid" style="margin-top:5px;">
+            <span class="icon">📁</span>
+            <span class="name">work/</span>
+          </div>
+          <div class="indent">
+            <div class="claudemd-row">
+              <span class="icon">📄</span>
+              <span class="name">CLAUDE.md</span>
+              <span class="tag">work rules</span>
+            </div>
+
+            <div class="folder f-open" style="margin-top:6px;">
+              <span class="icon">📂</span>
+              <span class="name">recipe-app/</span>
+              <span class="you-are-here">▶ open here</span>
+            </div>
+            <div class="indent">
+              <div class="claudemd-row">
+                <span class="icon">📄</span>
+                <span class="name">CLAUDE.md</span>
+                <span class="tag">this project</span>
+              </div>
+              <div class="folder f-sub" style="margin-top:6px;">
+                <span class="icon">📁</span>
+                <span class="name">backend/</span>
+              </div>
+              <div class="folder f-sub" style="margin-top:4px;">
+                <span class="icon">📁</span>
+                <span class="name">frontend/</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLAUDE'S HIDDEN STORAGE -->
+        <div class="section-divider" style="margin-top:18px;">claude's hidden storage</div>
+
+        <div class="folder f-claude">
+          <span class="icon">🔒</span>
+          <span class="name">.claude/</span>
+          <span style="font-size:0.72rem;color:#888;">hidden</span>
+        </div>
+
+        <div class="indent">
+          <div class="claudemd-row" style="margin-top:6px;">
+            <span class="icon">📄</span>
+            <span class="name">CLAUDE.md</span>
+            <span class="tag">global — always loads</span>
+          </div>
+
+          <div class="folder f-pdir" style="margin-top:8px;">
+            <span class="icon">📁</span>
+            <span class="name">memory-buckets/</span>
+            <span style="font-size:0.72rem;color:#999;">one per folder you open</span>
+          </div>
+
+          <div class="indent">
+            <div class="folder f-active" style="margin-top:6px;">
+              <span class="icon">📁</span>
+              <span class="name" style="font-size:0.76rem;">-code-work-recipe-app/</span>
+            </div>
+            <div class="indent">
+              <div class="folder f-mfile" style="margin-top:5px;">
+                <span class="icon">📄</span>
+                <span class="name">MEMORY.md</span>
+                <span style="font-size:0.68rem;color:#6b7280;flex-shrink:0;">auto-loads</span>
+              </div>
+              <div class="folder f-mfile2" style="margin-top:4px;">
+                <span class="icon">📄</span>
+                <span class="name">preferences.md</span>
+                <span style="font-size:0.68rem;color:#6b7280;flex-shrink:0;">on demand</span>
+              </div>
+              <div class="folder f-mfile2" style="margin-top:4px;">
+                <span class="icon">📄</span>
+                <span class="name">decisions.md</span>
+                <span style="font-size:0.68rem;color:#6b7280;flex-shrink:0;">on demand</span>
+              </div>
+            </div>
+
+            <div class="folder f-inactive" style="margin-top:6px;">
+              <span class="icon">📁</span>
+              <span class="name" style="font-size:0.76rem;">-code-personal/</span>
+            </div>
+            <div class="folder f-inactive" style="margin-top:4px;">
+              <span class="icon">📁</span>
+              <span class="name" style="font-size:0.76rem;">-code-work/</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="note note-amber" style="margin-top:16px;">
+        💻 <strong>To see .claude/ in Finder:</strong> press
+        <kbd style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:1px 6px;font-size:0.8rem;">⌘ Shift .</kbd>
+        to show hidden folders.
+      </div>
+
+    </div>
+
+    <!-- ── COL 2: Explanation panels ── -->
+    <div>
+      <div class="col-header">What loads when you open recipe-app/</div>
+
+      <div class="panel">
+        <div class="panel-title pt-purple">📄 CLAUDE.md — stacks upward from where you open</div>
+        <div class="row"><div class="dot dot-on"></div><div><span class="file-tag ft-purple">.claude/CLAUDE.md</span> &nbsp;global rules — your name, your style</div></div>
+        <div class="row"><div class="dot dot-on"></div><div><span class="file-tag ft-purple">code/CLAUDE.md</span> &nbsp;rules for all your projects</div></div>
+        <div class="row"><div class="dot dot-on"></div><div><span class="file-tag ft-purple">work/CLAUDE.md</span> &nbsp;work-specific rules</div></div>
+        <div class="row"><div class="dot dot-on"></div><div><span class="file-tag ft-purple">recipe-app/CLAUDE.md</span> &nbsp;tech stack, run commands</div></div>
+        <div class="note note-purple">✅ All four load automatically, every session, before you type anything.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title pt-green">🧠 Memory — only the exact folder you opened</div>
+        <div class="row"><div class="dot dot-off"></div><div style="color:#aaa;">.claude/ global memory &nbsp;— not loaded</div></div>
+        <div class="row"><div class="dot dot-on"></div><div>-code-work-recipe-app/ &nbsp;<strong>loaded</strong></div></div>
+        <div class="row"><div class="dot dot-off"></div><div style="color:#aaa;">-code-work-recipe-app-backend/ &nbsp;— not loaded</div></div>
+        <div class="note note-green">✅ Claude writes memory automatically when it learns something from you.</div>
+        <div class="note note-yellow" style="margin-top:8px;">⚠️ Claude sometimes saves to the wrong place. Audit every few weeks — but don't let it drift into a second CLAUDE.md.</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title pt-black">💡 Be intentional about where you open Claude</div>
+        <div style="font-size:0.82rem;line-height:1.6;color:#444;">
+          Claude creates a memory bucket for <strong>wherever you open it</strong>. Open from <code style="background:#f3f4f6;padding:1px 5px;border-radius:4px;">personal/</code> for personal work, <code style="background:#f3f4f6;padding:1px 5px;border-radius:4px;">work/</code> for work. The context should match the folder.
+        </div>
+        <div class="note note-green" style="margin-top:8px;">📌 MEMORY.md index loads every session automatically. Individual topic files only load when you ask something related.</div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#2563eb;"></div> Where you opened Claude</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f59e0b;"></div> Active memory bucket</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#ede9fe;border:1px solid #c4b5fd;"></div> CLAUDE.md file</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#22c55e;"></div> Memory file (auto-loads)</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#f0fdf4;border:1px solid #bbf7d0;"></div> Memory file (on demand)</div>
+  </div>
+
+</div>
+</body>
+</html>
